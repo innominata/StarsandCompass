@@ -1,0 +1,27 @@
+[config]
+schemaVersion = "0.0.1"
+
+[package]
+namespace = "innominata"
+name = "StarsandCompass"
+versionNumber = "1.1.0"
+description = "Adds a compass to the HUD"
+websiteUrl = "https://github.com/innominata/StarsandCompass"
+containsNsfwContent = false
+
+[package.dependencies]
+"BepInEx-BepInExPack_Starsand"= "5.4.16"
+
+[build]
+icon = "./icon.png"
+readme = "./README.md"
+outdir = "./"
+
+[[build.copy]]
+source = "./obj/Debug/net472/StarsandCompass.dll"
+target = "./StarsandCompass.dll"
+
+[publish]
+repository = "https://starsand.thunderstore.io"
+communities = ["starsand"]
+categories = []
