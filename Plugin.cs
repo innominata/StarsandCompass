@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using System.Linq;
+using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using UltimateSurvival.StandardAssets;
@@ -24,10 +25,11 @@ namespace StarsandCompass
         public static float _y, _z;
         public static float[] dirArray = { _E, _SE, _S, _SW, _W, _NW, _N, _NE };
         public static string[] cardArray = { "E", "SE", "S", "SW", "W", "NW", "N", "NE" };
-
+        public static GeneralManager gm;
         private void Awake()
         {
             Logger = new ManualLogSource("Compass");
+            BepInEx.Logging.Logger.Sources.Add(Logger);
             Logger.LogInfo("Starsand Compass Mod Loading");
             Harmony.CreateAndPatchAll(typeof(StarsandGummy));
         }
@@ -36,6 +38,7 @@ namespace StarsandCompass
         [HarmonyPatch(typeof(GeneralManager), "Start")]
         public static void Start(ref GeneralManager __instance)
         {
+            gm = __instance;
             var fpscounter = GameObject.Find("In-Game GUI/Canvas/2-HUD/").GetComponentInChildren<FPSDisplayer>().gameObject;
             var fpsTransform = fpscounter.transform;
             var compassObject = Instantiate(fpscounter, fpsTransform.parent, false);
@@ -57,6 +60,20 @@ namespace StarsandCompass
             Pointer.text = "|";
             Pointer.color = Color.gray;
             Pointer.alignment = TextAnchor.UpperCenter;
+            
+            
+            
+            // if (gm == null) gm = GameObject.FindGameObjectWithTag("manager").GetComponent<GeneralManager>();
+            
+            Logger.LogInfo("Start");
+            Logger.LogInfo((gm == null).ToString());
+            Logger.LogInfo((gm.MainPlayer == null).ToString());
+            MapManager mm = GameObject.FindGameObjectWithTag("manager").GetComponent<MapManager>();
+            mm.PlaceMarker(gm.MainPlayer);
+            Logger.LogInfo("1");
+            var marker = mm.markersPlaced[mm.markersPlaced.Count() - 1];
+            marker.GetComponent<Image>().color = Color.blue;
+            
         }
 
         [HarmonyPostfix]
@@ -78,6 +95,12 @@ namespace StarsandCompass
             }
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(MapManager), "Start")]
+        public static void MapStart(ref MapManager __instance)
+        {
+
+        }
 
     }
 }
