@@ -21,6 +21,20 @@ None required. Remove the mod or rename the .dll extension to .dllOld to disable
 For support, or to discuss and discover other mods for Starsand, check out the [Starsand Modding Discord](https://discord.gg/ZYVpC6uyY7)
 
 ## Changelog
+1.3.0:
+ - Fixed versioning.
+ - 
+1.2.1: 
+
+ - Fixed an error in console
+ 
+1.2.0:
+
+ - Fixed it on purpose
+
+1.1.0:
+
+ - Broke it by accident
 
 1.0.0:
 

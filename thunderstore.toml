@@ -4,7 +4,7 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "innominata"
 name = "StarsandCompass"
-versionNumber = "1.1.0"
+versionNumber = "1.3.0"
 description = "Adds a compass to the HUD"
 websiteUrl = "https://github.com/innominata/StarsandCompass"
 containsNsfwContent = false
@@ -20,7 +20,9 @@ outdir = "./"
 [[build.copy]]
 source = "./obj/Debug/net472/StarsandCompass.dll"
 target = "./StarsandCompass.dll"
-
+[[build.copy]]
+source = "./font"
+target = "./font"
 [publish]
 repository = "https://starsand.thunderstore.io"
 communities = ["starsand"]

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
+using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -9,7 +11,7 @@ using UnityEngine.UI;
 namespace StarsandCompass
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    public class StarsandGummy : BaseUnityPlugin
+    public class StarsandCompass : BaseUnityPlugin
     {
         public const float _S = 90f;
         public const float _SW = 135f;
@@ -26,12 +28,23 @@ namespace StarsandCompass
         public static float[] dirArray = { _E, _SE, _S, _SW, _W, _NW, _N, _NE };
         public static string[] cardArray = { "E", "SE", "S", "SW", "W", "NW", "N", "NE" };
         public static GeneralManager gm;
+        public static AssetBundle ab = AssetBundle.LoadFromFile(Path.GetDirectoryName(Assembly.GetAssembly(typeof(StarsandCompass)).Location) + "\\font");
+        public static Font font;
         private void Awake()
         {
             Logger = new ManualLogSource("Compass");
             BepInEx.Logging.Logger.Sources.Add(Logger);
             Logger.LogInfo("Starsand Compass Mod Loading");
-            Harmony.CreateAndPatchAll(typeof(StarsandGummy));
+            Harmony.CreateAndPatchAll(typeof(StarsandCompass));
+            if(ab != null)
+            {
+                font = ab.LoadAsset<Font>("Assets/Komon.ttf");
+                
+            }
+            else
+            {
+                Debug.Log("FAILED TO LOAD ASSET BUNDLE");
+            }
         }
 
         [HarmonyPostfix]
@@ -55,24 +68,35 @@ namespace StarsandCompass
                 compassTexts[i] = Instantiate(compassObject, compassRect.parent, false).GetComponent<Text>();
                 compassTexts[i].text = cardArray[i];
                 compassTexts[i].alignment = TextAnchor.UpperCenter;
+                compassTexts[i].name = "CompassText_" + cardArray[i];
+                if(font != null)
+                {
+                    fpscounter.GetComponent<Text>().font = font;
+                    compassTexts[i].font = font;
+                }
+                else
+                {
+                    Debug.Log("FAILED TO LOAD FONT FROM ASSET BUNDLE");
+                }
+                // compassTexts[i].transform.SetParent(TextTemplate.transform);
             }
             Pointer = TextTemplate;
             Pointer.text = "|";
             Pointer.color = Color.gray;
             Pointer.alignment = TextAnchor.UpperCenter;
-            
+
             
             
             // if (gm == null) gm = GameObject.FindGameObjectWithTag("manager").GetComponent<GeneralManager>();
             
-            Logger.LogInfo("Start");
-            Logger.LogInfo((gm == null).ToString());
-            Logger.LogInfo((gm.MainPlayer == null).ToString());
-            MapManager mm = GameObject.FindGameObjectWithTag("manager").GetComponent<MapManager>();
-            mm.PlaceMarker(gm.MainPlayer);
-            Logger.LogInfo("1");
-            var marker = mm.markersPlaced[mm.markersPlaced.Count() - 1];
-            marker.GetComponent<Image>().color = Color.blue;
+            // Logger.LogInfo("Start");
+            // Logger.LogInfo((gm == null).ToString());
+            // Logger.LogInfo((gm.MainPlayer == null).ToString());
+            // MapManager mm = GameObject.FindGameObjectWithTag("manager").GetComponent<MapManager>();
+            // mm.PlaceMarker(gm.MainPlayer);
+            // Logger.LogInfo("1");
+            // var marker = mm.markersPlaced[mm.markersPlaced.Count() - 1];
+            // marker.GetComponent<Image>().color = Color.blue;
             
         }
 
@@ -81,6 +105,7 @@ namespace StarsandCompass
         public static void Update(ref GeneralManager __instance)
         {
             var angle = __instance.FpPlayer.m_LookAngles.y;
+            // Logger.LogInfo(angle);
             var iAngle = angle % 360;
             var differences = new float[8];
             for (var i = 0; i < 8; i++)
@@ -92,6 +117,7 @@ namespace StarsandCompass
                 var alpha = (90f - Mathf.Abs(_x)) / 50f;
                 alpha = Mathf.Clamp(alpha, 0, 1f);
                 compassTexts[i].color = new Color(1, 1, 1, alpha);
+                compassTexts[i].GetComponent<RectTransform>().localPosition = new Vector3(_x, _y, _z);
             }
         }
 
