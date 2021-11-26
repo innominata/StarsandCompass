@@ -4,7 +4,7 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "innominata"
 name = "StarsandCompass"
-versionNumber = "1.3.0"
+versionNumber = "1.4.0"
 description = "Adds a compass to the HUD"
 websiteUrl = "https://github.com/innominata/StarsandCompass"
 containsNsfwContent = false

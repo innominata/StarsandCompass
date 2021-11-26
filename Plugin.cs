@@ -55,8 +55,10 @@ namespace StarsandCompass
             var fpscounter = GameObject.Find("In-Game GUI/Canvas/2-HUD/").GetComponentInChildren<FPSDisplayer>().gameObject;
             var fpsTransform = fpscounter.transform;
             var compassObject = Instantiate(fpscounter, fpsTransform.parent, false);
+            
             compassObject.name = "Compass";
             var compassRect = compassObject.GetComponent<RectTransform>();
+            compassRect.pivot = new Vector2(0.5f, 1f);
             _y = compassRect.localPosition.y;
             _z = compassRect.localPosition.z;
             compassRect.localPosition = new Vector3(0, _y, _z);
@@ -105,12 +107,24 @@ namespace StarsandCompass
         public static void Update(ref GeneralManager __instance)
         {
             var angle = __instance.FpPlayer.m_LookAngles.y;
-            // Logger.LogInfo(angle);
-            var iAngle = angle % 360;
+            SetCompassAngle(angle % 360);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(DromaderFPScontroller), "Update")]
+        public static void CamelUpdate(ref DromaderFPScontroller __instance)
+        {
+            var Vangle = __instance.m_Camera.transform.eulerAngles;
+            Logger.LogInfo(Vangle);
+            SetCompassAngle(Vangle.y % 360);
+        }
+
+        public static void SetCompassAngle(float angleInDegrees)
+        {
             var differences = new float[8];
             for (var i = 0; i < 8; i++)
             {
-                differences[i] = dirArray[i] - iAngle;
+                differences[i] = dirArray[i] - angleInDegrees;
                 if (differences[i] < -180) differences[i] += 360;
                 else if (differences[i] > 180) differences[i] -= 360;
                 var _x = Mathf.Clamp(differences[i], -90, 90);
@@ -120,13 +134,5 @@ namespace StarsandCompass
                 compassTexts[i].GetComponent<RectTransform>().localPosition = new Vector3(_x, _y, _z);
             }
         }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(MapManager), "Start")]
-        public static void MapStart(ref MapManager __instance)
-        {
-
-        }
-
     }
 }

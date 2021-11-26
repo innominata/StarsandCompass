@@ -21,9 +21,15 @@ None required. Remove the mod or rename the .dll extension to .dllOld to disable
 For support, or to discuss and discover other mods for Starsand, check out the [Starsand Modding Discord](https://discord.gg/ZYVpC6uyY7)
 
 ## Changelog
+1.4.0:
+- Compass now works while on camels
+
+1.3.1:
+- Centered compass for oxothuk
+
 1.3.0:
  - Fixed versioning.
- - 
+
 1.2.1: 
 
  - Fixed an error in console
